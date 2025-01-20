@@ -22,7 +22,90 @@ const questionBank = [
  ];
 
 
+//  select 5 random question
 
+function RandomQuestion(){
+    
+    const arr = [];
+    let i = 0;
+    let length = questionBank.length;
+    while(i<5)
+    {
+      const index = Math.floor(Math.random()*length);
+      arr.push(questionBank[index]);
+      [questionBank[index],questionBank[length-1]] = [questionBank[length-1],questionBank[index]];
+      length--,i++;
+    }
+
+    return arr;
+}
+
+const form = document.querySelector('form');
+const selected_question = RandomQuestion();
+const correct_answer = {};
+
+//  create the input field of the form
+
+selected_question.forEach((problem, index)=>{
+    
+    const div_element = document.createElement('div');
+    div_element.className = "question";
+    
+    const para = document.createElement('p');
+    para.innerText = `${index+1}. ${problem['question']}`;
+    div_element.appendChild(para);
+
+    //  Now create option for each field
+    problem['options'].forEach((data)=>{
+        const input = document.createElement('input');
+        input.type = "radio";
+        input.name = `q${index+1}`;
+        input.value = data;
+
+        const label = document.createElement('label');
+        label.appendChild(input);
+        label.appendChild(document.createTextNode(data));
+        div_element.append(label);
+        div_element.appendChild(document.createElement('br'));
+    })
+
+    correct_answer[`q${index+1}`] = problem['answer'];
+    form.append(div_element);
+})
+
+const submitButton = document.createElement('button');
+submitButton.type = 'submit';
+submitButton.className = "submit-btn";
+submitButton.innerText = "SUBMIT";
+
+form.appendChild(submitButton);
+
+
+
+// check result of submitted result
+
+
+form.addEventListener('submit',(event)=>{
+    
+    event.preventDefault();
+    const data = new FormData(form);
+ 
+ 
+    let result = 0
+ 
+    for(let [key,value] of data.entries())
+    {
+     if(value===correct_answer[key])
+         result++;
+    }
+ 
+    const out = document.getElementById('out');
+    out.innerText = `${result} out of 5 is correct`;
+ 
+ 
+    form.reset();
+ 
+ })
 
 
 
